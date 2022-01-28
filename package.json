@@ -1,0 +1,25 @@
+{
+    "name": "vscode-tilt",
+    "displayName": "vscode-tilt",
+    "description": "",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "tiltfile",
+            "aliases": ["Tiltfile", "tiltfile"],
+            "extensions": ["Tiltfile",".tiltfile"],
+            "configuration": "./syntaxes/tiltfile.configuration.json"
+        }],
+        "grammars": [{
+            "language": "tiltfile",
+            "scopeName": "source.tiltfile",
+            "path": "./syntaxes/tiltfile.tmLanguage.json"
+        }]
+    }
+}
