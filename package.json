@@ -30,6 +30,29 @@
                 "scopeName": "source.tiltfile",
                 "path": "./syntaxes/tiltfile.tmLanguage.json"
             }
+        ],
+        "configuration": [
+            {
+                "title": "Tiltfile LSP",
+                "properties": {
+                    "tiltfile.trace.server": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "default": "off",
+                        "description": "Log requests and responses to Tiltfile LSP",
+                        "enum": [
+                            "off",
+                            "messages",
+                            "compact",
+                            "verbose"
+                        ],
+                        "pattern": "off|messages|compact|verbose",
+                        "patternErrorMessage": "Invalid log level"
+                    }
+                }
+            }
         ]
     },
     "main": "./out/extension.js",
