@@ -33,12 +33,12 @@ export class TiltfileClient extends LanguageClient {
 	async serverOptions(): Promise<ChildProcess|StreamInfo> {
 		return this.isDebugLspServerListening().then((listening: boolean) => new Promise((res) => {
 			if (listening) {
-				this.outputChannel.appendLine("Connect to debug server");
+				this.info("Connect to debug server");
 				const socket = net.connect({host: "127.0.0.1", port: debugLspPort});
 				res({writer: socket, reader: socket});
 			} else {
 				const sharedArgs = ["start", "--builtin-paths=" + this.context.asAbsolutePath("data/api.py")]
-				this.outputChannel.appendLine("Starting child process");
+				this.info("Starting child process");
 				res(spawn("starlark-lsp", sharedArgs.concat(["--verbose", "--debug"])));
 			}
 		}));
@@ -51,11 +51,11 @@ export class TiltfileClient extends LanguageClient {
 					socket.write("\r\n");
 					socket.pipe(socket);
 				});
-				server.on('error', function () {
+				server.on('error', () => {
 					this.wasListening = true;
 					resolve(true);
 				});
-				server.on('listening', function () {
+				server.on('listening', () => {
 					server.close();
 					resolve(false);
 				});
@@ -72,13 +72,8 @@ export class TiltfileClient extends LanguageClient {
 
 	public registerCommands() {
 		this.context.subscriptions.push(commands.registerCommand("tiltfile.restartServer", () => {
-			this.outputChannel.appendLine("Restarting server 1");
-			this.stop().catch((e) => {
-				this.outputChannel.appendLine("Error restarting: " + e);
-			}).then(() => {
-				this.outputChannel.appendLine("Restarting server 2");
-				this.start();
-			});
+			this.info("Restarting server");
+			this.stop().catch(e => this.warn(e)).then(() => this.start());
 		}));
 	}
 }

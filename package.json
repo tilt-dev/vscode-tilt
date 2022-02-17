@@ -57,7 +57,7 @@
         "commands": [
 	    {
 	        "command": "tiltfile.restartServer",
-	        "title": "Restart LSP Server"
+	        "title": "Restart Tiltfile LSP Server"
 	    }
 	]
     },
