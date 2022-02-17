@@ -1,38 +1,35 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
+import net = require('net');
+import { spawn } from 'child_process';
 
-import { window, workspace, ExtensionContext } from 'vscode';
+import { commands, window, workspace, ExtensionContext, OutputChannel, Disposable, } from 'vscode';
 
 import {
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
-	TransportKind
 } from 'vscode-languageclient/node';
 
 let client: LanguageClient;
+let disposeClient: Disposable;
 
 export function activate(context: ExtensionContext) {
 	const sharedArgs = ["start", "--builtin-paths=" + context.asAbsolutePath("data/api.py")]
+	const outputChannel = window.createOutputChannel('Tiltfile LSP');
 
-	// If the extension is launched in debug mode then the debug server options are used
-	// Otherwise the run options are used
-	const serverOptions: ServerOptions = {
-		run: {
-			command: "starlark-lsp",
-			args: sharedArgs.concat(["--verbose"]),
-			transport: TransportKind.stdio
-		},
-		debug: {
-			command: "starlark-lsp",
-			args: sharedArgs.concat(["--debug"]),
-			transport: TransportKind.stdio
-		}
+	registerCommands(context, outputChannel);
+
+	const serverOptions: ServerOptions = () => {
+		return isLspServerListening().then((listening: boolean) => new Promise((res) => {
+			if (listening) {
+				outputChannel.appendLine("Connect to existing server");
+				const socket = net.connect({host: "127.0.0.1", port: defaultLspPort});
+				res({writer: socket, reader: socket});
+			} else {
+				outputChannel.appendLine("Starting child process");
+				res(spawn("starlark-lsp", sharedArgs.concat(["--verbose", "--debug"])));
+			}
+		}))
 	};
-
-	let outputChannel = window.createOutputChannel('Tiltfile LSP');
 
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
@@ -54,9 +51,10 @@ export function activate(context: ExtensionContext) {
 	);
 
 	// Start the client. This will also launch the server
-	client.start();
+	disposeClient = client.start();
 
 	outputChannel.appendLine("Tiltfile LSP started");
+	outputChannel.show(true);
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -64,4 +62,47 @@ export function deactivate(): Thenable<void> | undefined {
 		return undefined;
 	}
 	return client.stop();
+}
+
+const defaultLspPort = 8765;
+let wasListening = false;
+
+function isLspServerListening(): Promise<boolean> {
+	return new Promise((resolve) => {
+		const checkListen = () => {
+			var server = net.createServer(function(socket) {
+				socket.write("\r\n");
+				socket.pipe(socket);
+			});
+			server.on('error', function () {
+				wasListening = true;
+				resolve(true);
+			});
+			server.on('listening', function () {
+				server.close();
+				resolve(false);
+			});
+			server.listen(defaultLspPort, '127.0.0.1');
+		}
+
+		if (wasListening) {
+			setTimeout(checkListen, 2500);
+		} else {
+			checkListen();
+		}
+	});
+}
+
+function registerCommands(context: ExtensionContext, ch: OutputChannel) {
+	context.subscriptions.push(commands.registerCommand("tiltfile.restartServer", () => {
+		ch.appendLine("Restarting server 1");
+		client.stop().catch((e) => {
+			ch.appendLine("Error restarting: " + e);
+		}).then(() => {
+			disposeClient.dispose();
+			ch.appendLine("Restarting server 2");
+			wasListening = false;
+			disposeClient = client.start();
+		});
+	}));
 }
