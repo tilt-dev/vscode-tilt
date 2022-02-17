@@ -1,6 +1,6 @@
 import net = require('net');
 import { ChildProcess, spawn } from 'child_process';
-import { commands, ExtensionContext, window, workspace } from 'vscode';
+import { commands, Disposable, ExtensionContext, window, workspace } from 'vscode';
 import { LanguageClient, LanguageClientOptions, StreamInfo } from 'vscode-languageclient/node';
 
 const debugLspPort  = 8760;
@@ -30,10 +30,17 @@ export class TiltfileClient extends LanguageClient {
 		};
 	}
 
+	start(): Disposable {
+		const disp = super.start()
+		this.info("Tiltfile LSP started");
+		return disp
+	}
+
 	async serverOptions(): Promise<ChildProcess|StreamInfo> {
 		return this.isDebugLspServerListening().then((listening: boolean) => new Promise((res) => {
 			if (listening) {
 				this.info("Connect to debug server");
+				this.outputChannel.show(true);
 				const socket = net.connect({host: "127.0.0.1", port: debugLspPort});
 				res({writer: socket, reader: socket});
 			} else {
