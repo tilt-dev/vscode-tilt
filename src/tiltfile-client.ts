@@ -8,7 +8,7 @@ const extensionLang = 'tiltfile';
 const extensionName = 'Tiltfile LSP';
 
 export class TiltfileClient extends LanguageClient {
-	private wasListening = false;
+	private usingDebugServer = false;
 
 	public constructor(private context: ExtensionContext) {
 		super(extensionLang, extensionName,
@@ -40,6 +40,7 @@ export class TiltfileClient extends LanguageClient {
 		return this.isDebugLspServerListening().then((listening: boolean) => new Promise((res) => {
 			if (listening) {
 				this.info("Connect to debug server");
+				this.usingDebugServer = true;
 				this.outputChannel.show(true);
 				const socket = net.connect({host: "127.0.0.1", port: debugLspPort});
 				res({writer: socket, reader: socket});
@@ -54,22 +55,13 @@ export class TiltfileClient extends LanguageClient {
 	isDebugLspServerListening(): Promise<boolean> {
 		return new Promise((resolve) => {
 			const checkListen = () => {
-				var server = net.createServer(function(socket) {
-					socket.write("\r\n");
-					socket.pipe(socket);
-				});
-				server.on('error', () => {
-					this.wasListening = true;
-					resolve(true);
-				});
-				server.on('listening', () => {
-					server.close();
-					resolve(false);
-				});
+				var server = net.createServer();
+				server.on('error', () => resolve(true));
+				server.on('listening', () => { server.close(); resolve(false); });
 				server.listen(debugLspPort, '127.0.0.1');
 			}
 
-			if (this.wasListening) { // wait for server to restart
+			if (this.usingDebugServer) { // wait for server to restart
 				setTimeout(checkListen, 2500);
 			} else {
 				checkListen();
