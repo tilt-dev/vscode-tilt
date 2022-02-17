@@ -3,18 +3,22 @@ import { ChildProcess, spawn } from 'child_process';
 import { commands, Disposable, ExtensionContext, window, workspace } from 'vscode';
 import { LanguageClient, LanguageClientOptions, StreamInfo } from 'vscode-languageclient/node';
 
+import { PlaceholderErrorHandler, TiltfileErrorHandler } from './error-handlers';
+
 const debugLspPort  = 8760;
 const extensionLang = 'tiltfile';
 const extensionName = 'Tiltfile LSP';
+const maxRestartCount = 5;
 
 export class TiltfileClient extends LanguageClient {
-	private usingDebugServer = false;
+	private _usingDebugServer = false;
 
 	public constructor(private context: ExtensionContext) {
 		super(extensionLang, extensionName,
 			  () => this.serverOptions(),
 			  TiltfileClient.clientOptions());
 		this.registerCommands();
+		this.installErrorHandler();
 	}
 
 	static clientOptions(): LanguageClientOptions {
@@ -26,21 +30,33 @@ export class TiltfileClient extends LanguageClient {
 				fileEvents: workspace.createFileSystemWatcher('**/Tiltfile')
 			},
 			outputChannel: ch,
-			traceOutputChannel: ch
+			traceOutputChannel: ch,
+			errorHandler: new PlaceholderErrorHandler(),
 		};
 	}
 
-	start(): Disposable {
+	public get usingDebugServer() {
+		return this._usingDebugServer;
+	}
+
+	public start(): Disposable {
 		const disp = super.start()
 		this.info("Tiltfile LSP started");
 		return disp
 	}
 
-	async serverOptions(): Promise<ChildProcess|StreamInfo> {
+	public registerCommands() {
+		this.context.subscriptions.push(commands.registerCommand("tiltfile.restartServer", () => {
+			this.info("Restarting server");
+			this.stop().catch(e => this.warn(e)).then(() => this.start());
+		}));
+	}
+
+	private async serverOptions(): Promise<ChildProcess|StreamInfo> {
 		return this.isDebugLspServerListening().then((listening: boolean) => new Promise((res) => {
 			if (listening) {
 				this.info("Connect to debug server");
-				this.usingDebugServer = true;
+				this._usingDebugServer = true;
 				this.outputChannel.show(true);
 				const socket = net.connect({host: "127.0.0.1", port: debugLspPort});
 				res({writer: socket, reader: socket});
@@ -52,7 +68,7 @@ export class TiltfileClient extends LanguageClient {
 		}));
 	}
 
-	isDebugLspServerListening(): Promise<boolean> {
+	private isDebugLspServerListening(): Promise<boolean> {
 		return new Promise((resolve) => {
 			const checkListen = () => {
 				var server = net.createServer();
@@ -69,10 +85,8 @@ export class TiltfileClient extends LanguageClient {
 		});
 	}
 
-	public registerCommands() {
-		this.context.subscriptions.push(commands.registerCommand("tiltfile.restartServer", () => {
-			this.info("Restarting server");
-			this.stop().catch(e => this.warn(e)).then(() => this.start());
-		}));
+	private installErrorHandler() {
+		const placeholder = this.clientOptions.errorHandler as PlaceholderErrorHandler;
+		placeholder.delegate = new TiltfileErrorHandler(this, maxRestartCount);
 	}
 }
