@@ -13,19 +13,16 @@ export class PlaceholderErrorHandler implements ErrorHandler {
 	}
 }
 
-export class TiltfileErrorHandler implements ErrorHandler {
-	private delegate: ErrorHandler
-
+export class TiltfileErrorHandler extends PlaceholderErrorHandler {
 	constructor(private client: TiltfileClient, maxRestartCount: number) {
-		this.delegate = this.client.createDefaultErrorHandler(maxRestartCount)
+		super();
+		this.delegate = this.client.createDefaultErrorHandler(maxRestartCount);
 	}
 
-    error(error: Error, message: Message, count: number): ErrorAction {
-		return this.delegate.error(error, message, count);
-    }
-
     closed(): CloseAction {
-		if (this.client.usingDebugServer) { // always restart when using the debug server
+		// default error handler backs off after several restarts;
+		// always restart when using the debug server
+		if (this.client.usingDebugServer) {
 			return CloseAction.Restart;
 		}
 		return this.delegate.closed();
