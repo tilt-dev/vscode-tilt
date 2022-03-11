@@ -10,6 +10,17 @@
     "categories": [
         "Programming Languages"
     ],
+    "keywords": [
+        "Tiltfile",
+        "Tilt",
+        "tilt",
+        "Kubernetes",
+        "kubernetes",
+        "k8s",
+        "development",
+        "dev env",
+        "docker"
+    ],
     "contributes": {
         "languages": [
             {
