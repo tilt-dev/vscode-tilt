@@ -1,6 +1,6 @@
-# vscode-tilt
+# Tiltfile VSCode Extension
 
-The `vscode-tilt` extension provides an improved editing experience for `Tiltfile` authors.
+The `Tiltfile` extension provides an improved editing experience for `Tiltfile` authors.
 
 ## Features
 

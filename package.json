@@ -1,6 +1,6 @@
 {
     "name": "vscode-tilt",
-    "displayName": "vscode-tilt",
+    "displayName": "Tiltfile",
     "description": "",
     "version": "0.0.1",
     "engines": {
