@@ -4,7 +4,9 @@ The `Tiltfile` extension provides an improved editing experience for `Tiltfile` 
 
 ## Features
 
-TODO
+- Starlark syntax highlighting
+- Autocomplete for `Tiltfile` functions
+- Signature support for `Tiltfile` functions
 
 ## Requirements
 
