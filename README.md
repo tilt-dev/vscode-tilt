@@ -21,10 +21,3 @@ This extension contributes the following settings:
 ### LSP
 
 * `tiltfile.trace.server`: controls logging level for LSP requests/responses (valid values: `off`, `messages`, `compact`, `verbose`)
-
-## Release Notes
-
-### 0.0.1
-
-* `Tiltfile` syntax highlighting
-* Signature help for built-in functions as well as functions in scope from current file
