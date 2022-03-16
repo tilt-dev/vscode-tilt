@@ -12,7 +12,7 @@ const extensionName = 'Tiltfile LSP';
 const maxRestartCount = 5;
 const tiltUnavailableNotification= 'Tilt language server could not be started';
 const tiltUnavailableMessage = 'Could not find a version of Tilt to use with the Tiltfile extension. ' +
-	'Please visit https://docs.tilt.dev/install.html to install Tilt. ' +
+	'Please visit https://docs.tilt.dev/install.html to install Tilt v0.26 or higher. ' +
 	'Autocomplete will not function without a compatible version of Tilt installed.';
 
 export class TiltfileClient extends LanguageClient {
