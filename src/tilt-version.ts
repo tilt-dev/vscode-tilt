@@ -8,7 +8,7 @@ function versionString(ver: SemVersion): string {
 	return `${ver.major}.${ver.minor}.${ver.patch}${ver.extra}`;
 }
 
-const versionRegexp = /^v(\d+)\.(\d+)\.(\d+)([^ ,]?)/;
+const versionRegexp = /^v(\d+)\.(\d+)\.(\d+)([^ ,]*)/;
 
 export async function checkTiltVersion(client: BaseLanguageClient): Promise<string> {
 	const tiltPath = getTiltPath();

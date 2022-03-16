@@ -24,5 +24,7 @@ export function getTrace(): string {
 }
 
 export function getTiltPath(): string {
-	return getConfig().get<string>('tilt.path', TILT);
+	const path = getConfig().get<string>('tilt.path');
+	if (path === null) return TILT;
+	return path;
 }

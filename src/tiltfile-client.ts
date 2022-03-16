@@ -59,7 +59,7 @@ export class TiltfileClient extends LanguageClient {
 
 	private startServer(): Promise<ChildProcess|StreamInfo> {
 		return new Promise((res, rej) => {
-			this.checkForDebugLspServer().then(port => {
+			this.checkForDebugLspServer().then(async (port) => {
 				if (port) {
 					this.info("Connect to debug server");
 					this._usingDebugServer = true;
@@ -70,23 +70,23 @@ export class TiltfileClient extends LanguageClient {
 				}
 
 				try {
-					checkTiltVersion(this).then((tiltPath) => {
-						const args = ["lsp", "start"];
-						this.info("Starting child process");
-						const trace = getTrace();
-						switch (trace) {
-							case "verbose":
-								args.push("--verbose");
-								break;
-							case "debug":
-								this.outputChannel.show(true);
-								args.push("--debug");
-								break;
-						}
-						res(spawn(tiltPath, args));
-					})
-				} catch (e) {
+					const tiltPath = await checkTiltVersion(this);
+					const args = ["lsp", "start"];
+					this.info("Starting child process");
+					const trace = getTrace();
+					switch (trace) {
+						case "verbose":
+							args.push("--verbose");
+							break;
+						case "debug":
+							this.outputChannel.show(true);
+							args.push("--debug");
+							break;
+					}
+					res(spawn(tiltPath, args));
+				} catch(e) {
 					this.error(e);
+					window.showErrorMessage(e.toString());
 					rej(e);
 				}
 			})
