@@ -10,6 +10,10 @@ import { checkTiltVersion } from './tilt-version';
 const extensionLang = 'tiltfile';
 const extensionName = 'Tiltfile LSP';
 const maxRestartCount = 5;
+const tiltUnavailableNotification= 'Tilt language server could not be started';
+const tiltUnavailableMessage = 'Could not find a version of Tilt to use with the Tiltfile extension. ' +
+	'Please visit https://docs.tilt.dev/install.html to install Tilt. ' +
+	'Autocomplete will not function without a compatible version of Tilt installed.';
 
 export class TiltfileClient extends LanguageClient {
 	private _usingDebugServer = false;
@@ -85,8 +89,9 @@ export class TiltfileClient extends LanguageClient {
 					}
 					res(spawn(tiltPath, args));
 				} catch(e) {
-					this.error(e);
-					window.showErrorMessage(e.toString());
+					this.warn(tiltUnavailableMessage);
+					this.outputChannel.show();
+					window.showErrorMessage(tiltUnavailableNotification);
 					rej(e);
 				}
 			})

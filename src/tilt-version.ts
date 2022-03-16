@@ -1,5 +1,4 @@
 import { spawn } from 'child_process';
-import { BaseLanguageClient } from 'vscode-languageclient';
 import { getTiltPath } from './config';
 
 type SemVersion = { major: number, minor: number, patch: number, extra: string };
@@ -8,18 +7,24 @@ function versionString(ver: SemVersion): string {
 	return `${ver.major}.${ver.minor}.${ver.patch}${ver.extra}`;
 }
 
+interface OutputChannelLog {
+	info(message: string, data?: any, showNotification?: boolean): void;
+    warn(message: string, data?: any, showNotification?: boolean): void;
+    error(message: string, data?: any, showNotification?: boolean): void;
+}
+
 const versionRegexp = /^v(\d+)\.(\d+)\.(\d+)([^ ,]*)/;
 
-export async function checkTiltVersion(client: BaseLanguageClient): Promise<string> {
+export async function checkTiltVersion(log: OutputChannelLog): Promise<string> {
 	const tiltPath = getTiltPath();
 	let error: Error;
 	try {
-		const version = await tiltVersion(tiltPath);
+		const version = await tiltVersion(tiltPath, log);
 		if (compatibleVersion(version)) {
-			client.info(`Found Tilt version ${versionString(version)}`);
+			log.info(`Found Tilt version ${versionString(version)}`);
 			return tiltPath;
 		}
-		error = new Error(`Tilt version ${versionString(version)} not compatible.`);
+		error = new Error(`Tilt version ${versionString(version)} is not compatible with the Tiltfile extension`);
 	} catch (e) {
 		error = e;
 	}
@@ -27,7 +32,7 @@ export async function checkTiltVersion(client: BaseLanguageClient): Promise<stri
 	throw error;
 }
 
-function tiltVersion(path: string): Promise<SemVersion> {
+function tiltVersion(path: string, log: OutputChannelLog): Promise<SemVersion> {
 	return new Promise((res, rej) => {
 		const proc = spawn(path, ["version"]);
 		let output = "";
@@ -35,15 +40,21 @@ function tiltVersion(path: string): Promise<SemVersion> {
 			output = output + data;
 		})
 		proc.on('error', err => {
-			rej(err);
+			log.error(path + ": " + err.toString());
+			rej(new Error("Tilt not found"));
 		});
 		proc.on('close', code => {
+			const err = new Error("Tilt produced unexpected output");
 			if (code !== 0) {
-				rej(new Error(`${path} exited with non-zero status`));
+				log.error(`${path}: exited with non-zero status: ${code}`);
+				rej(err);
+				return;
 			}
 			const version = output.match(versionRegexp);
 			if (version === null) {
-				rej(new Error(`${path} gave unexpected version output`));
+				log.error(`${path}: gave unexpected version output`);
+				rej(err);
+				return;
 			}
 			res({
 				major: parseInt(version[1]),
