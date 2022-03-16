@@ -1,5 +1,6 @@
 import { Uri, window, workspace } from "vscode";
 
+export const TILT = 'tilt';
 const SECTION = 'tiltfile';
 
 export function getConfig(uri?: Uri) {
@@ -20,4 +21,8 @@ export function getServerPort(): Port {
 
 export function getTrace(): string {
 	return getConfig().get<string>('trace.server');
+}
+
+export function getTiltPath(): string {
+	return getConfig().get<string>('tilt.path', TILT);
 }

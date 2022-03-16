@@ -5,6 +5,7 @@ import { LanguageClient, LanguageClientOptions, StreamInfo } from 'vscode-langua
 
 import { PlaceholderErrorHandler, TiltfileErrorHandler } from './error-handlers';
 import { getServerPort, getTrace, Port } from './config';
+import { checkTiltVersion } from './tilt-version';
 
 const extensionLang = 'tiltfile';
 const extensionName = 'Tiltfile LSP';
@@ -15,7 +16,7 @@ export class TiltfileClient extends LanguageClient {
 
 	public constructor(private context: ExtensionContext) {
 		super(extensionLang, extensionName,
-			  () => this.serverOptions(),
+			  () => this.startServer(),
 			  TiltfileClient.clientOptions());
 		this.registerCommands();
 		this.installErrorHandler();
@@ -56,30 +57,40 @@ export class TiltfileClient extends LanguageClient {
 		this.stop().catch(e => this.warn(e)).then(() => this.start());
 	}
 
-	private async serverOptions(): Promise<ChildProcess|StreamInfo> {
-		return this.checkForDebugLspServer().then(port => new Promise((res) => {
-			if (port) {
-				this.info("Connect to debug server");
-				this._usingDebugServer = true;
-				this.outputChannel.show(true);
-				const socket = net.connect({host: "127.0.0.1", port});
-				res({writer: socket, reader: socket});
-			} else {
-				const args = ["lsp", "start"];
-				this.info("Starting child process");
-				const trace = getTrace();
-				switch (trace) {
-					case "verbose":
-						args.push("--verbose");
-						break;
-					case "debug":
-						this.outputChannel.show(true);
-						args.push("--debug");
-						break;
+	private startServer(): Promise<ChildProcess|StreamInfo> {
+		return new Promise((res, rej) => {
+			this.checkForDebugLspServer().then(port => {
+				if (port) {
+					this.info("Connect to debug server");
+					this._usingDebugServer = true;
+					this.outputChannel.show(true);
+					const socket = net.connect({host: "127.0.0.1", port});
+					res({writer: socket, reader: socket});
+					return;
 				}
-				res(spawn("tilt", args));
-			}
-		}));
+
+				try {
+					checkTiltVersion(this).then((tiltPath) => {
+						const args = ["lsp", "start"];
+						this.info("Starting child process");
+						const trace = getTrace();
+						switch (trace) {
+							case "verbose":
+								args.push("--verbose");
+								break;
+							case "debug":
+								this.outputChannel.show(true);
+								args.push("--debug");
+								break;
+						}
+						res(spawn(tiltPath, args));
+					})
+				} catch (e) {
+					this.error(e);
+					rej(e);
+				}
+			})
+		});
 	}
 
 	private checkForDebugLspServer(): Promise<Port> {
