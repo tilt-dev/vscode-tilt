@@ -92,7 +92,7 @@ export class TiltfileClient extends LanguageClient {
 					this.warn(tiltUnavailableMessage);
 					this.outputChannel.show();
 					window.showErrorMessage(tiltUnavailableNotification);
-					rej(e);
+					rej(e.toString());
 				}
 			})
 		});

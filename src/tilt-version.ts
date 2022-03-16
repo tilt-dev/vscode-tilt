@@ -35,15 +35,20 @@ export async function checkTiltVersion(log: OutputChannelLog): Promise<string> {
 function tiltVersion(path: string, log: OutputChannelLog): Promise<SemVersion> {
 	return new Promise((res, rej) => {
 		const proc = spawn(path, ["version"]);
+		let hadError = false;
 		let output = "";
 		proc.stdout.on('data', data => {
 			output = output + data;
 		})
 		proc.on('error', err => {
 			log.error(path + ": " + err.toString());
+			hadError = true;
 			rej(new Error("Tilt not found"));
 		});
 		proc.on('close', code => {
+			if (hadError) {
+				return;
+			}
 			const err = new Error("Tilt produced unexpected output");
 			if (code !== 0) {
 				log.error(`${path}: exited with non-zero status: ${code}`);
