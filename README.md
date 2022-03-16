@@ -1,4 +1,4 @@
-# Tiltfile VSCode Extension
+# Official Tiltfile VSCode Extension
 
 The `Tiltfile` extension provides an improved editing experience for `Tiltfile` authors.
 
