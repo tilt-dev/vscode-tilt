@@ -12,7 +12,7 @@ This extension is currently in alpha state and might feel a bit buggy here and t
 
 ## Requirements
 
-TODO
+- Tilt version >[vx.x.x](https://github.com/tilt-dev/tilt/releases/tag/vx.x.x)
 
 ## Extension Settings
 
