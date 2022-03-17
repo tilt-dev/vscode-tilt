@@ -62,46 +62,42 @@ export class TiltfileClient extends LanguageClient {
 	}
 
 	private async startServer(): Promise<ChildProcess|StreamInfo> {
-		return new Promise((res, rej) => {
-			this.checkForDebugLspServer().then(async (port) => {
-				if (port) {
-					this.info("Connect to debug server");
-					this._usingDebugServer = true;
-					this.outputChannel.show(true);
-					const socket = net.connect({host: "127.0.0.1", port});
-					res({writer: socket, reader: socket});
-					return;
-				}
+		const port = await this.checkForDebugLspServer()
+		if (port) {
+			this.info("Connect to debug server");
+			this._usingDebugServer = true;
+			this.outputChannel.show(true);
+			const socket = net.connect({host: "127.0.0.1", port});
+			return {writer: socket, reader: socket};
+		}
 
-				try {
-					const tiltPath = await checkTiltVersion(this);
-					const args = ["lsp", "start"];
-					this.info("Starting child process");
-					const trace = getTrace();
-					switch (trace) {
-						case "verbose":
-							args.push("--verbose");
-							break;
-						case "debug":
-							this.outputChannel.show(true);
-							args.push("--debug");
-							break;
-					}
-					res(spawn(tiltPath, args));
-				} catch(e) {
-					this.warn(tiltUnavailableMessage);
-					this.outputChannel.show();
-					window.showErrorMessage(tiltUnavailableNotification);
-					rej(e.toString());
-				}
-			})
-		});
+		try {
+			const tiltPath = await checkTiltVersion(this);
+			const args = ["lsp", "start"];
+			this.info("Starting child process");
+			const trace = getTrace();
+			switch (trace) {
+				case "verbose":
+					args.push("--verbose");
+					break;
+				case "debug":
+					this.outputChannel.show(true);
+					args.push("--debug");
+					break;
+			}
+			return spawn(tiltPath, args);
+		} catch(e) {
+			this.warn(tiltUnavailableMessage);
+			this.outputChannel.show();
+			window.showErrorMessage(tiltUnavailableNotification);
+			throw e.toString();
+		}
 	}
 
 	private async checkForDebugLspServer(): Promise<Port> {
 		const port = getServerPort()
 		if (!port) {
-			return Promise.resolve(null);
+			return null;
 		}
 		return new Promise((resolve) => {
 			const checkListen = () => {
