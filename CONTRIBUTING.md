@@ -17,3 +17,5 @@
    ```
 3. Press `F5` or `Run > Start Debugging`
 4. Hit `Ctrl-R` (`⌘-R`) to reload the extension and re-launch `starlark-lsp`
+
+5. When releasing new versions of this extension, make sure to update the [changelog](CHANGELOG.md)
