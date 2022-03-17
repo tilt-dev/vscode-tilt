@@ -61,7 +61,7 @@ export class TiltfileClient extends LanguageClient {
 		this.stop().catch(e => this.warn(e)).then(() => this.start());
 	}
 
-	private startServer(): Promise<ChildProcess|StreamInfo> {
+	private async startServer(): Promise<ChildProcess|StreamInfo> {
 		return new Promise((res, rej) => {
 			this.checkForDebugLspServer().then(async (port) => {
 				if (port) {
@@ -98,7 +98,7 @@ export class TiltfileClient extends LanguageClient {
 		});
 	}
 
-	private checkForDebugLspServer(): Promise<Port> {
+	private async checkForDebugLspServer(): Promise<Port> {
 		const port = getServerPort()
 		if (!port) {
 			return Promise.resolve(null);

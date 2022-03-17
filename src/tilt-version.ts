@@ -32,7 +32,7 @@ export async function checkTiltVersion(log: OutputChannelLog): Promise<string> {
 	throw error;
 }
 
-function tiltVersion(path: string, log: OutputChannelLog): Promise<SemVersion> {
+async function tiltVersion(path: string, log: OutputChannelLog): Promise<SemVersion> {
 	return new Promise((res, rej) => {
 		const proc = spawn(path, ["version"]);
 		let hadError = false;
