@@ -33,33 +33,41 @@
         ],
         "configuration": [
             {
-                "title": "Tiltfile LSP",
+                "title": "Tiltfile",
                 "properties": {
                     "tiltfile.trace.server": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "default": "off",
                         "description": "Log requests and responses to Tiltfile LSP",
                         "enum": [
                             "off",
-                            "messages",
-                            "compact",
-                            "verbose"
+                            "verbose",
+                            "debug"
                         ],
-                        "pattern": "off|messages|compact|verbose",
+                        "pattern": "off|verbose|debug",
                         "patternErrorMessage": "Invalid log level"
+                    },
+                    "tiltfile.server.port": {
+                        "type": ["number", "null"],
+                        "default": null,
+                        "description": "Port (on localhost) of running language server",
+                        "scope": "machine-overridable"
+                    },
+                    "tiltfile.tilt.path": {
+                        "type": ["string", "null"],
+                        "default": null,
+                        "description": "File path of Tilt program to run the language server",
+                        "scope": "machine-overridable"
                     }
                 }
             }
         ],
         "commands": [
-	    {
-	        "command": "tiltfile.restartServer",
-	        "title": "Restart Tiltfile LSP Server"
-	    }
-	]
+            {
+                "command": "tiltfile.restartServer",
+                "title": "Restart Tiltfile LSP Server"
+            }
+        ]
     },
     "main": "./out/extension.js",
     "activationEvents": [
