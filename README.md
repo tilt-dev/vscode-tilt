@@ -17,12 +17,17 @@ This extension is currently in alpha state and might feel a bit buggy here and t
 - Tilt version >[v0.26.0](https://github.com/tilt-dev/tilt/releases/tag/v0.26.0)
 
 ## Dev Mode
-- To run the VSCode extension locally, check out our [CONTRIBUTING](https://github.com/tilt-dev/vscode-tilt/blob/main/CONTRIBUTING.md) guide
+
+- To run the VSCode extension locally, check out our [CONTRIBUTING][contributing] guide
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
-### LSP
+### Tiltfile
 
-* `tiltfile.trace.server`: controls logging level for LSP requests/responses (valid values: `off`, `messages`, `compact`, `verbose`)
+- `tiltfile.trace.server`: Control the logging level for language server requests/responses (valid values: `off` (default), `verbose`, `debug`).
+- `tiltfile.server.port`: Set the number of the port where an existing Tilt language server is running. For use while [developing the Tiltfile extension][contributing].
+- `tiltfile.tilt.path`: Set the path of the Tilt executable to use as the language server. Defaults to using the `tilt` binary that is found in the environment.
+
+[contributing]: https://github.com/tilt-dev/vscode-tilt/blob/main/CONTRIBUTING.md
