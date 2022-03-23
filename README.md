@@ -16,6 +16,9 @@ This extension is currently in alpha state and might feel a bit buggy here and t
 
 - Tilt version >[v0.26.0](https://github.com/tilt-dev/tilt/releases/tag/v0.26.0)
 
+## Dev Mode
+- To run the VSCode extension locally, check out our [CONTRIBUTING](https://github.com/tilt-dev/vscode-tilt/blob/main/CONTRIBUTING.md) guide
+
 ## Extension Settings
 
 This extension contributes the following settings:
