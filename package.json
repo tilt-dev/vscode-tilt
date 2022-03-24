@@ -1,9 +1,11 @@
 {
-    "name": "vscode-tilt",
+    "name": "Tilt",
     "displayName": "Tiltfile",
-    "description": "The `Tiltfile` extension provides an improved editing experience for `Tiltfile` authors.",
+    "description": "Provides an improved editing experience for `Tiltfile` authors.",
+    "publisher": "tilt-dev",
     "repository": "https://github.com/tilt-dev/vscode-tilt",
     "icon": "assets/tilt-transparent.png",
+    "preview": "true",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.63.0"
