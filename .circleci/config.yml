@@ -12,10 +12,11 @@ jobs:
 workflows:
   test-publish:
     jobs:
-      - test
-      - vsce/publish:
+      - test:
           context:
             - Tilt Slack Context
+      - vsce/publish:
+          context:
             - Tilt VSCE Context
           filters:
             branches:
