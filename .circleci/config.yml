@@ -10,7 +10,7 @@ jobs:
 workflows:
   test-publish:
     jobs:
-      - test:
+      - test
       - vsce/publish:
           context:
             - Tilt VSCE Context
