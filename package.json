@@ -1,5 +1,5 @@
 {
-    "name": "Tilt",
+    "name": "Tiltfile",
     "displayName": "Tiltfile",
     "description": "Provides an improved editing experience for `Tiltfile` authors.",
     "publisher": "tilt-dev",
