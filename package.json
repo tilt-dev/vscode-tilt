@@ -1,11 +1,11 @@
 {
-    "name": "Tiltfile",
+    "name": "tiltfile",
     "displayName": "Tiltfile",
     "description": "Provides an improved editing experience for `Tiltfile` authors.",
     "publisher": "tilt-dev",
     "repository": "https://github.com/tilt-dev/vscode-tilt",
-    "icon": "assets/tilt-transparent.png",
-    "preview": "true",
+    "icon": "https://raw.githubusercontent.com/tilt-dev/vscode-tilt/main/assets/tilt-transparent.png",
+    "preview": true,
     "version": "0.0.2",
     "engines": {
         "vscode": "^1.63.0"
