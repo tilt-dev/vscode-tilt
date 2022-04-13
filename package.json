@@ -34,7 +34,8 @@
                 ],
                 "extensions": [
                     "Tiltfile",
-                    ".tiltfile"
+                    ".tiltfile",
+                    ".tilt"
                 ],
                 "configuration": "./syntaxes/tiltfile.configuration.json"
             }
