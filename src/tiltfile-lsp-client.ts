@@ -4,7 +4,7 @@ import {
   commands,
   Disposable,
   ExtensionContext,
-  window,
+  OutputChannel,
   workspace,
 } from "vscode"
 import {
@@ -18,7 +18,7 @@ import { getServerPort, getTrace, Port } from "./config"
 import { checkTiltVersion } from "./tilt-version"
 
 const extensionLang = "tiltfile"
-const extensionName = "Tiltfile LSP"
+const extensionName = "Tiltfile"
 const maxRestartCount = 5
 const tiltUnavailableNotification = "Tilt language server could not be started"
 const tiltUnavailableMessage =
@@ -29,19 +29,18 @@ const tiltUnavailableMessage =
 export class TiltfileLspClient extends LanguageClient {
   private _usingDebugServer = false
 
-  public constructor(private context: ExtensionContext) {
+  public constructor(private context: ExtensionContext, ch: OutputChannel) {
     super(
       extensionLang,
       extensionName,
       () => this.startServer(),
-      TiltfileLspClient.clientOptions()
+      TiltfileLspClient.clientOptions(ch)
     )
     this.registerCommands()
     this.installErrorHandler()
   }
 
-  static clientOptions(): LanguageClientOptions {
-    const ch = window.createOutputChannel(extensionName)
+  static clientOptions(ch: OutputChannel): LanguageClientOptions {
     return {
       documentSelector: [{ scheme: "file", language: extensionLang }],
       synchronize: {

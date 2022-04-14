@@ -1,15 +1,18 @@
-import { ExtensionContext } from "vscode"
+import { ExtensionContext, window } from "vscode"
 import { TiltfileErrorWatcher } from "./tiltfile-error-watcher"
 
 import { TiltfileLspClient } from "./tiltfile-lsp-client"
+
+const extensionName = "tiltfile"
 
 let client: TiltfileLspClient
 let tiltfileErrorWatcher: TiltfileErrorWatcher
 
 export function activate(context: ExtensionContext) {
-  client = new TiltfileLspClient(context)
+  const ch = window.createOutputChannel(extensionName)
+  client = new TiltfileLspClient(context, ch)
   client.start()
-  tiltfileErrorWatcher = new TiltfileErrorWatcher(context)
+  tiltfileErrorWatcher = new TiltfileErrorWatcher(context, ch)
   tiltfileErrorWatcher.start()
 }
 

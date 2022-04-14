@@ -20,10 +20,15 @@ function matchToLocation(m: RegExpMatchArray): Location {
   }
 }
 
-export function parseTiltfileError(error: string): {
-  message: string
-  locations: Location[]
-} {
+export function parseTiltfileError(error: string):
+  | {
+      message: string
+      locations: Location[]
+    }
+  | undefined {
+  if (!error) {
+    return undefined
+  }
   if (error.startsWith("Traceback")) {
     const lines = error.split("\n")
     let locations = new Array<Location>()

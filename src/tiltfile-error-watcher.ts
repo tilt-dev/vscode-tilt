@@ -15,8 +15,13 @@ export class TiltfileErrorWatcher implements Disposable {
   private diagnostics: vscode.DiagnosticCollection
   private tiltWatch: ChildProcessWithoutNullStreams
   private reconnectTimeout: NodeJS.Timeout | undefined
+  private output: vscode.OutputChannel
 
-  public constructor(private context: ExtensionContext) {
+  public constructor(
+    private context: ExtensionContext,
+    ch: vscode.OutputChannel
+  ) {
+    this.output = ch
     this.diagnostics = vscode.languages.createDiagnosticCollection("tiltfile")
     context.subscriptions.push(this.diagnostics)
   }
@@ -31,7 +36,7 @@ export class TiltfileErrorWatcher implements Disposable {
     ])
     p.stderr.setEncoding("utf8")
     p.stderr.on("data", (data) => {
-      console.log(`tilt session api stderr: ${data}`)
+      this.output.appendLine(`tilt session api stderr: ${data}`)
     })
     p.stdout.setEncoding("utf8")
 
@@ -39,28 +44,31 @@ export class TiltfileErrorWatcher implements Disposable {
       if (data.length > 0) {
         try {
           const terminated = JSON.parse(data)
-          const { message, locations } = parseTiltfileError(terminated.error)
+          const result = parseTiltfileError(terminated.error)
           this.diagnostics.clear()
-          locations.forEach((location) => {
-            const uri = vscode.Uri.file(location.path)
-            this.diagnostics.set(uri, [
-              tiltfileErrorToDiagnostic(message, location),
-            ])
-          })
+          if (result) {
+            const { message, locations } = result
+            locations.forEach((location) => {
+              const uri = vscode.Uri.file(location.path)
+              this.diagnostics.set(uri, [
+                tiltfileErrorToDiagnostic(message, location),
+              ])
+            })
+          }
         } catch (error) {
-          console.log(
+          this.output.appendLine(
             `tilt session watch: error processing session json: ${error}`
           )
         }
       }
     })
     p.on("close", (code) => {
-      console.log(`tilt session watch exited w/ code ${code}`)
+      this.output.appendLine(`tilt session watch exited w/ code ${code}`)
       this.tiltWatch = null
       this.ensureReconnecting()
     })
     p.on("error", (error) => {
-      console.log("tilt session watch errored", error)
+      this.output.appendLine(`tilt session watch errored: ${error}`)
       this.tiltWatch = null
       this.ensureReconnecting()
     })
