@@ -5,6 +5,7 @@ import {
   Disposable,
   ExtensionContext,
   OutputChannel,
+  window,
   workspace,
 } from "vscode"
 import {
