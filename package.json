@@ -104,16 +104,27 @@
         "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
         "compile": "npm run esbuild",
         "watch": "npm run esbuild-watch",
-        "clean": "rm -rf out"
+        "clean": "rm -rf out",
+        "test": "jest"
     },
     "dependencies": {
+        "@types/glob": "^7.2.0",
+        "@types/jest": "^27.4.1",
+        "@types/split2": "^3.2.1",
+        "glob": "^7.2.0",
+        "jest": "^27.5.1",
+        "split2": "^4.1.0",
+        "ts-jest": "^27.1.4",
         "vscode-languageclient": "^7.0.0"
     },
     "devDependencies": {
         "@types/node": "^17.0.13",
         "@types/vscode": "^1.63.0",
-        "@vscode/test-electron": "^1.6.1",
+        "@vscode/test-electron": "^1.6.2",
         "esbuild": "^0.14.29",
         "typescript": "^4.4.3"
+    },
+    "jest": {
+        "preset": "ts-jest"
     }
 }
