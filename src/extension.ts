@@ -1,18 +1,17 @@
-import { ExtensionContext } from 'vscode';
+import { ExtensionContext } from "vscode"
 
-import { TiltfileClient } from './tiltfile-client';
+import { TiltfileClient } from "./tiltfile-client"
 
-let client: TiltfileClient;
+let client: TiltfileClient
 
 export function activate(context: ExtensionContext) {
-	client = new TiltfileClient(context);
-	client.start();
+  client = new TiltfileClient(context)
+  client.start()
 }
 
 export function deactivate(): Thenable<void> | undefined {
-	if (!client) {
-		return undefined;
-	}
-	return client.stop();
+  if (!client) {
+    return undefined
+  }
+  return client.stop()
 }
-
