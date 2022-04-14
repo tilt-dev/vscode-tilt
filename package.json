@@ -105,6 +105,8 @@
         "compile": "npm run esbuild",
         "watch": "npm run esbuild-watch",
         "clean": "rm -rf out",
+        "prettier": "prettier --write \"src/**/*.ts\"",
+        "check": "prettier --check \"src/**/*.ts*\" && tsc -p .",
         "test": "jest"
     },
     "dependencies": {
@@ -122,6 +124,7 @@
         "@types/vscode": "^1.63.0",
         "@vscode/test-electron": "^1.6.2",
         "esbuild": "^0.14.29",
+        "prettier": "2.6.2",
         "typescript": "^4.4.3"
     },
     "jest": {
