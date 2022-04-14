@@ -7,7 +7,12 @@ jobs:
     executor: vsce/node-browsers
     steps:
       - checkout
+      - run: npm install
+      - run: npm run check
 workflows:
+  build:
+    jobs:
+      - test
   test-publish:
     jobs:
       - test

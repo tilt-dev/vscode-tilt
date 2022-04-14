@@ -105,7 +105,8 @@
         "compile": "npm run esbuild",
         "watch": "npm run esbuild-watch",
         "clean": "rm -rf out",
-        "prettier": "prettier --write \"src/**/*.ts\""
+        "prettier": "prettier --write \"src/**/*.ts\"",
+        "check": "prettier --check \"src/**/*.ts*\" && tsc -p ."
     },
     "dependencies": {
         "vscode-languageclient": "^7.0.0"
