@@ -4,7 +4,7 @@ import {
   ErrorHandler,
   Message,
 } from "vscode-languageclient"
-import { TiltfileClient } from "./tiltfile-client"
+import { TiltfileLspClient } from "./tiltfile-lsp-client"
 
 export class PlaceholderErrorHandler implements ErrorHandler {
   public delegate: ErrorHandler
@@ -19,7 +19,7 @@ export class PlaceholderErrorHandler implements ErrorHandler {
 }
 
 export class TiltfileErrorHandler extends PlaceholderErrorHandler {
-  constructor(private client: TiltfileClient, maxRestartCount: number) {
+  constructor(private client: TiltfileLspClient, maxRestartCount: number) {
     super()
     this.delegate = this.client.createDefaultErrorHandler(maxRestartCount)
   }

@@ -4,6 +4,7 @@ import {
   commands,
   Disposable,
   ExtensionContext,
+  OutputChannel,
   window,
   workspace,
 } from "vscode"
@@ -18,7 +19,7 @@ import { getServerPort, getTrace, Port } from "./config"
 import { checkTiltVersion } from "./tilt-version"
 
 const extensionLang = "tiltfile"
-const extensionName = "Tiltfile LSP"
+const extensionName = "Tiltfile"
 const maxRestartCount = 5
 const tiltUnavailableNotification = "Tilt language server could not be started"
 const tiltUnavailableMessage =
@@ -26,22 +27,21 @@ const tiltUnavailableMessage =
   "Please visit https://docs.tilt.dev/install.html to install Tilt v0.26 or higher. " +
   "Autocomplete will not function without a compatible version of Tilt installed."
 
-export class TiltfileClient extends LanguageClient {
+export class TiltfileLspClient extends LanguageClient {
   private _usingDebugServer = false
 
-  public constructor(private context: ExtensionContext) {
+  public constructor(private context: ExtensionContext, ch: OutputChannel) {
     super(
       extensionLang,
       extensionName,
       () => this.startServer(),
-      TiltfileClient.clientOptions()
+      TiltfileLspClient.clientOptions(ch)
     )
     this.registerCommands()
     this.installErrorHandler()
   }
 
-  static clientOptions(): LanguageClientOptions {
-    const ch = window.createOutputChannel(extensionName)
+  static clientOptions(ch: OutputChannel): LanguageClientOptions {
     return {
       documentSelector: [{ scheme: "file", language: extensionLang }],
       synchronize: {
