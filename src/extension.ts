@@ -1,6 +1,6 @@
 import { ExtensionContext, window } from "vscode"
+import { addTiltLinkToStatusBar } from "./tilt-link"
 import { TiltfileErrorWatcher } from "./tiltfile-error-watcher"
-
 import { TiltfileLspClient } from "./tiltfile-lsp-client"
 
 const extensionName = "tiltfile"
@@ -14,6 +14,7 @@ export function activate(context: ExtensionContext) {
   client.start()
   tiltfileErrorWatcher = new TiltfileErrorWatcher(context, ch)
   tiltfileErrorWatcher.start()
+  addTiltLinkToStatusBar(context)
 }
 
 export function deactivate(): Thenable<void> | undefined {
