@@ -49,6 +49,7 @@
         ],
         "configuration": [
             {
+                "type": "object",
                 "title": "Tiltfile",
                 "properties": {
                     "tiltfile.trace.server": {
@@ -82,6 +83,18 @@
                         ],
                         "default": null,
                         "description": "File path of Tilt program to run the language server",
+                        "scope": "machine-overridable"
+                    },
+                    "tiltfile.showStatusBarButton": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Whether to show a button for this extension in the VSCode StatusBar",
+                        "scope": "machine-overridable"
+                    },
+                    "tiltfile.tilt.webui.port": {
+                        "type": "number",
+                        "default": 10350,
+                        "description": "Port to open the Tilt Web UI on",
                         "scope": "machine-overridable"
                     }
                 }

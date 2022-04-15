@@ -28,3 +28,11 @@ export function getTiltPath(): string {
   if (path === null) return TILT
   return path
 }
+
+export function getShowStatusBarButton(): boolean {
+  return getConfig().get<boolean>("showStatusBarButton")
+}
+
+export function getTiltWebUIPort(): number {
+  return getConfig().get<number>("tilt.webui.port")
+}
