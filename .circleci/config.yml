@@ -3,15 +3,18 @@ orbs:
   slack: circleci/slack@3.4.0
 jobs:
   test:
-    executor: vsce/node-browsers
+    docker:
+      - image: node:16-alpine
     steps:
       - checkout
       - run: npm install
       - run: npm run check
   publish:
-    executor: vsce/node-browsers
+    docker:
+      - image: node:16-alpine
     steps:
       - checkout
+      - run: npm install -g vsce
       - run: npx vsce publish -p "$VSCODE_MARKETPLACE_TOKEN"
 workflows:
   build:
