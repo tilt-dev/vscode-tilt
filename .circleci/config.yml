@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm install -g vsce
-      - run: npx vsce publish -p "$VSCODE_MARKETPLACE_TOKEN"
+      - run: npx vsce publish
 workflows:
   build:
     jobs:
