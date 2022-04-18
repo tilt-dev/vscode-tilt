@@ -70,7 +70,9 @@ export class TiltfileErrorWatcher implements Disposable {
         if (stderr !== "") {
           this.output.append(stderr)
           if (stderr.includes("No tilt apiserver found")) {
-            this.output.appendLine(`No running Tilt found. Tiltfile runtime error highlighting will work when Tilt is started.`)
+            this.output.appendLine(
+              `No running Tilt found. Tiltfile runtime error highlighting will work when Tilt is started.`
+            )
           }
         }
         this.output.appendLine(error)
