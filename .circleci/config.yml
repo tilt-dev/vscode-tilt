@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   slack: circleci/slack@3.4.0
-  vsce: uraway/vsce@0.0.4
 jobs:
   test:
     executor: vsce/node-browsers
@@ -9,6 +8,11 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run check
+  publish:
+    executor: vsce/node-browsers
+    steps:
+      - checkout
+      - run: npx vsce publish -p "$VSCODE_MARKETPLACE_TOKEN"
 workflows:
   build:
     jobs:
@@ -21,7 +25,7 @@ workflows:
               only: never-release-on-a-branch
             tags:
               only: /v[0-9]+.[0-9]+.[0-9]+/
-      - vsce/publish:
+      - publish:
           context:
             - Tilt VSCE Context
             - Tilt Slack Context
@@ -30,23 +34,6 @@ workflows:
               only: never-release-on-a-branch
             tags:
               only: /v[0-9]+.[0-9]+.[0-9]+/
-          post-install-steps:
-            - save_cache:
-                key: 'v1-node-cache-{{ .Branch }}-{{ checksum "package-lock.json" }}'
-                paths:
-                  - node_modules
-            - slack/notify:
-                message: "Publishing vscode-tilt extension to the marketplace"
-          pre-install-steps:
-            - restore_cache:
-                keys:
-                  - >-
-                    v1-node-cache-{{ .Branch }}-{{ checksum "package-lock.json"
-                    }}
-                  - 'v1-node-cache-{{ .Branch }}'
-                  - v1-node-cache-
-          publish-token-variable: VSCODE_MARKETPLACE_TOKEN
-          push-git-tag: false
           requires:
             - test
 
