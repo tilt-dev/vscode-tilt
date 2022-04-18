@@ -22,10 +22,15 @@ The [`Tiltfile` in the starlark-lsp repository](/tilt-dev/starlark-lsp/blob/main
 
 ## Publishing the extension to the VSCode Marketplace
 
-The extension is published via `vsce publish`.
-Setup:
-1. Install vsce (per vs docs above) ([docs](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#installation).
-2. Get access to the tilt-dev VSCode Marketplace publisher
-  1. Log into VSCode Marketplace and get your user ID as described [here](https://docs.microsoft.com/en-us/visualstudio/extensibility/walkthrough-publishing-a-visual-studio-extension?view=vs-2022#troubleshoot-adding-a-user-to-the-publisher-account).
-  2. Ask a team member who already has access to the publisher to add your user ID to the publisher [here](https://marketplace.visualstudio.com/manage/publishers/tilt-dev).
-3. Set up a Personal Access Token ([docs](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token).
+The extension is published via CircleCI.
+
+To create a new release $VERSION (e.g., v0.0.3):
+1. Edit package.json and bump the "version" field to $VERSION. Commit that change to master.
+2. `git tag -a $VERSION -m $VERSION && git push origin $VERSION`
+3. A CircleCI job will detect the tag and build and publish the new version of the extension. You can observe that here: https://app.circleci.com/pipelines/github/tilt-dev/vscode-tilt
+
+### Updating the token used for CI publishing
+
+CI authenticates via a VSCode Personal Access Token (PAT). These have a max lifetime of 1 year. When authentication fails due to expiry (nb: the auth error probably won't specify it's due to expiry), to update the token:
+1. Generate a new token [here](https://dev.azure.com/tilt-dev/_usersSettings/tokens) using [these instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token).
+2. Update the value of the `VSCE_PAT` environment variable in [circleci](https://app.circleci.com/settings/organization/github/tilt-dev/contexts/e2b4fe60-602e-4bcb-8be9-b7865ee6af95)
