@@ -16,6 +16,11 @@ workflows:
   test-publish:
     jobs:
       - test
+          filters:
+            branches:
+              only: never-release-on-a-branch
+            tags:
+              only: /v[0-9]+.[0-9]+.[0-9]+/
       - vsce/publish:
           context:
             - Tilt VSCE Context
