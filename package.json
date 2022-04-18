@@ -6,7 +6,7 @@
     "repository": "https://github.com/tilt-dev/vscode-tilt",
     "icon": "https://raw.githubusercontent.com/tilt-dev/vscode-tilt/main/assets/tilt-transparent.png",
     "preview": true,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.63.0"
     },
