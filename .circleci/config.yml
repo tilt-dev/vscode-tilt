@@ -16,6 +16,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm install -g vsce
+      - run: vsce login tilt-dev
       - run: npx vsce publish
 workflows:
   build:
