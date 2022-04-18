@@ -15,7 +15,7 @@ workflows:
       - test
   test-publish:
     jobs:
-      - test
+      - test:
           filters:
             branches:
               only: never-release-on-a-branch
