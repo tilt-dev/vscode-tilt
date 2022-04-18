@@ -16,6 +16,7 @@ export class TiltfileErrorWatcher implements Disposable {
   private tiltWatch: ChildProcessWithoutNullStreams
   private reconnectTimeout: NodeJS.Timeout | undefined
   private output: vscode.OutputChannel
+  private lastError: string | undefined
 
   public constructor(
     private context: ExtensionContext,
@@ -35,8 +36,9 @@ export class TiltfileErrorWatcher implements Disposable {
       "Tiltfile",
     ])
     p.stderr.setEncoding("utf8")
+    let stderr = ""
     p.stderr.on("data", (data) => {
-      this.output.appendLine(`tilt session api stderr: ${data}`)
+      stderr += `${data}\n`
     })
     p.stdout.setEncoding("utf8")
 
@@ -63,12 +65,28 @@ export class TiltfileErrorWatcher implements Disposable {
       }
     })
     p.on("close", (code) => {
-      this.output.appendLine(`tilt session watch exited w/ code ${code}`)
+      const error = `tilt session watch exited w/ code ${code}`
+      if (error !== this.lastError) {
+        if (stderr !== "") {
+          this.output.append(stderr)
+          if (stderr.includes("No tilt apiserver found")) {
+            this.output.appendLine(`No running Tilt found. Tiltfile runtime error highlighting will work when Tilt is started.`)
+          }
+        }
+        this.output.appendLine(error)
+        this.lastError = error
+      }
       this.tiltWatch = null
       this.ensureReconnecting()
     })
     p.on("error", (error) => {
-      this.output.appendLine(`tilt session watch errored: ${error}`)
+      if (error.message !== this.lastError) {
+        if (stderr !== "") {
+          this.output.append(stderr)
+        }
+        this.output.appendLine(`tilt session watch errored: ${error}`)
+        this.lastError = error.message
+      }
       this.tiltWatch = null
       this.ensureReconnecting()
     })
