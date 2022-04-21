@@ -11,6 +11,9 @@ This extension is currently in alpha state and might feel a bit buggy here and t
 - Starlark syntax highlighting
 - Autocomplete for `Tiltfile` functions
 - Signature support for `Tiltfile` functions
+- Hover support for docstrings
+- When Tilt is running, highlight Tiltfile execution errors in VSCode
+- VSCode status bar button to open the Tilt UI in a browser
 
 ## Requirements
 
