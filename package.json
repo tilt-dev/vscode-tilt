@@ -9,7 +9,7 @@
     },
     "icon": "assets/tilt-transparent.png",
     "preview": true,
-    "version": "0.0.3",
+    "version": "0.0.4",
     "engines": {
         "vscode": "^1.63.0"
     },
