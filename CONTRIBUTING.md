@@ -32,5 +32,20 @@ To create a new release $VERSION (e.g., v0.0.3):
 ### Updating the token used for CI publishing
 
 CI authenticates via a VSCode Personal Access Token (PAT). These have a max lifetime of 1 year. When authentication fails due to expiry (nb: the auth error probably won't specify it's due to expiry), to update the token:
-1. Generate a new token [here](https://dev.azure.com/tilt-dev/_usersSettings/tokens) using [these instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token).
-2. Update the value of the `VSCE_PAT` environment variable in [circleci](https://app.circleci.com/settings/organization/github/tilt-dev/contexts/e2b4fe60-602e-4bcb-8be9-b7865ee6af95)
+
+1. Make sure you're a member of the Tilt Dev org. Go
+   [here](https://dev.azure.com/tilt-dev/_usersSettings/tokens). If you get an
+   error, your account needs to be added by email address.
+   
+2. Make sure you're a member of the Tilt Dev publisher. Go
+   [here](https://marketplace.visualstudio.com/manage/publishers/tilt-dev). If
+   you get an error, your account needs to be added by account id. 
+   Go to https://marketplace.visualstudio.com/vs and 
+   mouse over your name/email in the upper right to get your account id.
+   
+3. Generate a new token
+   [here](https://dev.azure.com/tilt-dev/_usersSettings/tokens) using [these
+   instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token).
+
+4. Update the value of the `VSCE_PAT` environment variable in
+   [circleci](https://app.circleci.com/settings/organization/github/tilt-dev/contexts/e2b4fe60-602e-4bcb-8be9-b7865ee6af95)
