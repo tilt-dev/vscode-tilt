@@ -44,8 +44,16 @@ export class TiltfileErrorWatcher implements Disposable {
 
     p.stdout.pipe(split2()).on("data", (data) => {
       if (data.length > 0) {
+        let terminated = { error: "" }
         try {
-          const terminated = JSON.parse(data)
+          terminated = JSON.parse(data)
+        } catch (error) {
+          this.output.appendLine(`tilt session watch: output: ${data}`)
+          this.output.appendLine(`tilt session watch: parsing: ${error}`)
+          return
+        }
+
+        try {
           const result = parseTiltfileError(terminated.error)
           this.diagnostics.clear()
           if (result) {
@@ -59,7 +67,7 @@ export class TiltfileErrorWatcher implements Disposable {
           }
         } catch (error) {
           this.output.appendLine(
-            `tilt session watch: error processing session json: ${error}`
+            `tilt session watch: processing session: ${error}`
           )
         }
       }
